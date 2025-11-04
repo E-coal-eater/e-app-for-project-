@@ -1,0 +1,16 @@
+html {
+    --cg-color-1: #620049;
+    background-color: lightslategrey;
+}
+
+h1 {
+    color: var(--cg-color-1);
+}
+
+h3 {
+    color: var(--cg-color-1);
+}
+
+a {
+    color: var(--cg-color-1);
+}
