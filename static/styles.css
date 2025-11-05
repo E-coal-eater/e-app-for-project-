@@ -1,6 +1,9 @@
 html {
-    --cg-color-1: #620049;
-    background-color: lightslategrey;
+    --cg-color-1: #1DD500;
+    --cg-color-2: #58E342;
+    --cg-color-3: #30E014;
+    --cg-color-4: #17AA00;
+    --cg-color-5: #128400;
 }
 
 h1 {
