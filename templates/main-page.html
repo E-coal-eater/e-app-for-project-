@@ -1,10 +1,111 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Main page</title>
-        <link rel="icon" type="image/x-icon" href="static/goober.png"/>
-        <link rel="stylesheet" href="static/styles.css"/>
-        <link rel="stylesheet" href="static/main-page.css"/>
-    </head>
-    <a href="/login">Sign in</a>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Projet CYGO</title>
+    <link rel="icon" type="image/x-icon" href="static/goober.png"/>
+    <link rel="stylesheet" href="static/styles.css"/>
+    <link rel="stylesheet" href="static/main-page.css"/>
+</head>
+<body>
+    <header>
+        <h1>Projet CYGO</h1>
+        <a href="/login" class="btn-login">Se connecter</a>
+    </header>
+
+    <section class="section">
+        <div class="images">
+            <img src="static/velo.png" alt="logo velo funny">
+        </div>
+        <div class="text">
+            <h2>Récupération d'Énergie</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur sem tortor, sed suscipit nulla aliquam at. Curabitur porttitor
+                iaculis risus, non tempor odio ultricies in. Phasellus ullamcorper, felis et imperdiet condimentum, augue magna vulputate nisl, eu ultricies
+                mi magna quis arcu. Donec non vestibulum mauris, at molestie elit. Curabitur fringilla quis diam id tincidunt. Nulla dapibus mollis lorem,
+                non aliquam libero. Sed euismod commodo metus, nec lacinia odio venenatis eu. Nunc ut consequat purus.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="text">
+            <h2>Technologies utilisées</h2>
+            <p>
+                Nulla facilisi. Curabitur tempus sodales dolor quis convallis. Quisque leo quam, volutpat id libero id, mattis accumsan nunc. Phasellus eget
+                risus non ipsum aliquet interdum. Suspendisse malesuada aliquet arcu eu vestibulum. Donec vitae neque sollicitudin, tempor justo quis,
+                vulputate sapien. Duis malesuada tortor in ipsum ultrices, in semper lacus dapibus. Aliquam a tellus eget sem luctus placerat in eu neque.
+                Fusce in nisl hendrerit ligula consequat interdum ac sit amet mauris.
+            </p>
+        </div>
+        <div class="images">
+            <img src="static/velo.png" alt="logo velo funny">
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="images">
+            <img src="static/velo.png" alt="logo velo funny">
+        </div>
+        <div class="text">
+            <h2>Objectif</h2>
+            <p>
+                Nullam eget tellus nibh. Morbi faucibus vestibulum augue ut vehicula. Vestibulum eros nibh, sagittis sit amet elit quis, commodo
+                accumsan ante. Aenean venenatis sem nunc, id malesuada quam aliquet id. Curabitur quis dui malesuada, tincidunt urna non, gravida
+                quam. Suspendisse at dui in nulla gravida eleifend. Vestibulum enim magna, tincidunt vitae laoreet eget, egestas a lacus. In porttitor
+                malesuada est, sed ultrices quam ornare faucibus. Aliquam erat volutpat. Vestibulum quam felis, dignissim sit amet feugiat id, ornare eu
+                dolor. Mauris gravida, velit at vestibulum ultrices, ex odio sagittis dui, id tempus quam sapien non est. Donec vulputate commodo augue,
+                quis hendrerit eros interdum eget. Cras dictum semper nunc vel porttitor.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="text">
+            <h2>TEST 1</h2>
+            <p>
+                Vestibulum varius velit id lectus maximus, commodo convallis tellus volutpat. Maecenas et mauris nec sapien dignissim congue. Sed quis
+                justo at lectus rutrum imperdiet. Integer et convallis leo. Sed bibendum felis ut fermentum vehicula. Cras blandit elit sit amet lectus
+                vehicula, a sagittis felis sodales. Cras congue libero ut nulla vehicula tincidunt
+            </p>
+        </div>
+        <div class="images">
+            <img src="static/velo.png" alt="logo velo funny"/>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="images">
+            <img src="static/velo.png" alt="logo velo funny"/>
+        </div>
+        <div class="text">
+            <h2>TEST 2</h2>
+            <p>
+                Maecenas molestie nulla sit amet felis consectetur auctor. Vestibulum sollicitudin diam maximus mi semper sollicitudin. Duis faucibus
+                congue varius. Vivamus molestie euismod eros, vitae dapibus ante euismod eget. Ut tortor ex, feugiat nec arcu ultricies, tincidunt vehicula
+                lorem. Sed feugiat ultrices enim. Sed lacinia turpis nec mollis molestie. Ut elementum velit eu eros posuere, vel tempus neque bibendum.
+            </p>
+        </div>
+    </section>
+
+    <!-- Barre de progression (peut être remplacée par une image) -->
+    <footer>
+        <div class="progress-container">
+            <img src="static/velo2.png" alt="Vélo" id="bike">
+        </div>
+    </footer>
+
+    <script>
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+    
+            let bike = document.getElementById("bike");
+            // Fait avancer le vélo selon le scroll
+            bike.style.transform = `translateX(${scrolled}vw)`; 
+        };
+    </script>
+</body>
 </html>

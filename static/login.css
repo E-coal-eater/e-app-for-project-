@@ -1,0 +1,93 @@
+/* ======== Variables de thème ======== */
+:root {
+    --primary-color: #007BFF;       /* Bleu principal */
+    --primary-hover: #0056b3;       /* Bleu plus foncé pour hover */
+    --background-color: #e9eef6;    /* Gris-bleu clair du fond */
+    --box-bg: #ffffff;              /* Fond du login box */
+    --text-color: #222;             /* Couleur du texte */
+    --input-border: #ccc;           /* Bordure des champs */
+    --radius: 15px;                 /* Rayon de bordure standard */
+    --transition-speed: 0.3s;       /* Vitesse d’animation */
+}
+
+/* ======== Page ======== */
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: var(--background-color);
+    font-family: "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ======== Boîte de login ======== */
+.login-box {
+    background-color: var(--box-bg);
+    width: 400px;
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    transition: transform var(--transition-speed) ease;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+}
+
+.login-box img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.login-box h2 {
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+/* ======== Champs ======== */
+.login-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.login-input input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--input-border);
+    border-radius: var(--radius);
+    font-size: 1em;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.login-input input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* ======== Bouton ======== */
+.button button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius);
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+.button button:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.03);
+}

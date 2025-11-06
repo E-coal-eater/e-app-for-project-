@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>LOGIN</title>
-        <link rel="icon" type="image/x-icon" href="static/goober.png"/>
-        <link rel="stylesheet" href="static/styles.css"/>
-        <link rel="stylesheet" href="static/login.css"/>
-    </head>
-    <body>
-        <div class="login-box"
-        <h2>LOGIN</h2>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="static/goober.png"/>
+    <link rel="stylesheet" href="static/login.css"/>
+</head>
+<body>
+    <div class="login-box">
+        <img src="static/goober.png" alt="Logo du site">
+        <h2>Connexion</h2>
         <form method="POST">
             <div class="login-input">
-                <input type="username" name="username" placeholder="username" required/>
-                <input type="password" name="password" placeholder="password" required/>
+                <input type="text" name="username" placeholder="Nom d’utilisateur" required />
+                <input type="password" name="password" placeholder="Mot de passe" required />
             </div>
             <div class="button">
-                <button type="sumbit">LOGIN</button>
+                <button type="submit">Se connecter</button>
             </div>
         </form>
-    </body>
+    </div>
+</body>
 </html>
