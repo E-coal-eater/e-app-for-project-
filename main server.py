@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
-VALID_USERNAME = 'cygo'
-VALID_PASSWORD = '1234'
+VALID_USERNAME = 'les-déraillés'
+VALID_PASSWORD = 'Paulette'
 
 @app.route('/')
 def enter():
@@ -15,14 +15,14 @@ def login():
         password = request.form['password']
 
         if username == VALID_USERNAME and password == VALID_PASSWORD:
-            return redirect(url_for('home', username=username))
+            return redirect(url_for('control', username=username))
         else:
             return redirect(url_for('login?err=invalidLogin'))
     return render_template('login.html')
 
-@app.route('/home')
+@app.route('/control')
 def home():
-    return render_template('home.html')
+    return render_template('control.html')
     
 if __name__ == '__main__':
     app.run(debug=True)

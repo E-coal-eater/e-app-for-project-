@@ -1,0 +1,117 @@
+/* ===== Variables de thème ===== */
+:root {
+    --bg-color: #0d1117;           /* Fond global (type GitHub dark) */
+    --panel-bg: #161b22;           /* Panneaux */
+    --accent: #00aaff;             /* Bleu console */
+    --text-color: #e6edf3;         /* Texte clair */
+    --border-color: #30363d;       /* Lignes de séparation */
+    --radius: 8px;
+    --font: "Consolas", "Courier New", monospace;
+}
+
+/* ===== Page globale ===== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Barre du haut ===== */
+.top-bar {
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+}
+
+.top-bar h1 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin: 0;
+}
+
+.top-bar nav a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.top-bar nav a:hover {
+    color: #66ccff;
+}
+
+/* ===== Mise en page principale ===== */
+.console {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* ===== Panneaux ===== */
+.console section {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.console h2 {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+/* ===== Zone log / terminal ===== */
+.log-window {
+    background-color: #0b0f14;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+
+.log-window p {
+    margin: 3px 0;
+}
+
+/* ===== Zone principale ===== */
+.content-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-area img {
+    width: 300px;
+    height: auto;
+    border-radius: var(--radius);
+    opacity: 0.8;
+}
+
+/* ===== Panneau de droite (contrôles) ===== */
+.control-area {
+    flex: 1;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    font-style: italic;
+}
