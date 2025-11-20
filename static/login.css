@@ -91,3 +91,8 @@ html, body {
     background-color: var(--primary-hover);
     transform: scale(1.03);
 }
+
+.error{
+    color: red;
+    font-size: 0.9rem;
+}

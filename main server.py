@@ -21,8 +21,9 @@ def login():
         elif username == VALID_USERNAME2 and password == VALID_PASSWORD2:
             return redirect(url_for('pilot'))
         else:
-            return redirect(url_for('login?err=invalidLogin'))
-    return render_template('login.html')
+            return redirect(url_for('login', err='invalidLogin'))
+    err = request.args.get('err')
+    return render_template('login.html', err=err)
 
 @app.route('/control')
 def control():

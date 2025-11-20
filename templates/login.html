@@ -10,6 +10,9 @@
     <div class="login-box">
         <img src="static/goober.png" alt="Logo du site">
         <h2>Connexion</h2>
+        {% if err == 'invalidLogin' %}
+            <div class="error">Nom d'utilisateur ou mot de passe invalide</div>
+        {% endif %}
         <form method="POST">
             <div class="login-input">
                 <input type="text" name="username" placeholder="Nom d’utilisateur" required />
