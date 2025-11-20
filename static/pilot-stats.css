@@ -44,10 +44,11 @@ html, body {
 /* ===== Mise en page principale ===== */
 .console {
     flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    display: flex;
+    justify-content: center;
     gap: 10px;
     padding: 10px;
+    width: 100%;
 }
 
 /* ===== Style des panneaux ===== */
@@ -58,21 +59,12 @@ html, body {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    width: 100%
 }
 
 .console h2 {
     color: var(--accent);
     margin: 0 0 10px 0;
-}
-
-/* ===== Zone de logs ===== */
-.log-window {
-    background: #0b0f14;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
 }
 
 /* ===== Grande zone d'affichage vide ===== */
@@ -83,17 +75,7 @@ html, body {
     align-items: center;
     color: #999;
     font-size: 1.2rem;
-}
-
-/* ===== Zone d'information à droite ===== */
-.info-area {
-    flex: 1;
-    border: 1px dashed var(--border-color);
-    border-radius: var(--radius);
-    color: #777;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
 }
 
 /* ===== MODE MOBILE PAYSAGE ===== */
