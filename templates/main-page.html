@@ -16,10 +16,10 @@
 
     <section class="section">
         <div class="images">
-            <img src="static/velo.png" alt="logo velo funny">
+            <img src="static/velo2.png" alt="logo velo funny">
         </div>
         <div class="text">
-            <h2>Récupération d'Énergie</h2>
+            <h2>TEST 1</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur sem tortor, sed suscipit nulla aliquam at. Curabitur porttitor
                 iaculis risus, non tempor odio ultricies in. Phasellus ullamcorper, felis et imperdiet condimentum, augue magna vulputate nisl, eu ultricies
@@ -31,7 +31,7 @@
 
     <section class="section">
         <div class="text">
-            <h2>Technologies utilisées</h2>
+            <h2>TEST 2</h2>
             <p>
                 Nulla facilisi. Curabitur tempus sodales dolor quis convallis. Quisque leo quam, volutpat id libero id, mattis accumsan nunc. Phasellus eget
                 risus non ipsum aliquet interdum. Suspendisse malesuada aliquet arcu eu vestibulum. Donec vitae neque sollicitudin, tempor justo quis,
@@ -40,16 +40,16 @@
             </p>
         </div>
         <div class="images">
-            <img src="static/velo.png" alt="logo velo funny">
+            <img src="static/velo2.png" alt="logo velo funny">
         </div>
     </section>
 
     <section class="section">
         <div class="images">
-            <img src="static/velo.png" alt="logo velo funny">
+            <img src="static/velo2.png" alt="logo velo funny">
         </div>
         <div class="text">
-            <h2>Objectif</h2>
+            <h2>TEST 3</h2>
             <p>
                 Nullam eget tellus nibh. Morbi faucibus vestibulum augue ut vehicula. Vestibulum eros nibh, sagittis sit amet elit quis, commodo
                 accumsan ante. Aenean venenatis sem nunc, id malesuada quam aliquet id. Curabitur quis dui malesuada, tincidunt urna non, gravida
@@ -63,7 +63,7 @@
 
     <section class="section">
         <div class="text">
-            <h2>TEST 1</h2>
+            <h2>TEST 4</h2>
             <p>
                 Vestibulum varius velit id lectus maximus, commodo convallis tellus volutpat. Maecenas et mauris nec sapien dignissim congue. Sed quis
                 justo at lectus rutrum imperdiet. Integer et convallis leo. Sed bibendum felis ut fermentum vehicula. Cras blandit elit sit amet lectus
@@ -71,16 +71,16 @@
             </p>
         </div>
         <div class="images">
-            <img src="static/velo.png" alt="logo velo funny"/>
+            <img src="static/velo2.png" alt="logo velo funny"/>
         </div>
     </section>
 
     <section class="section">
         <div class="images">
-            <img src="static/velo.png" alt="logo velo funny"/>
+            <img src="static/velo2.png" alt="logo velo funny"/>
         </div>
         <div class="text">
-            <h2>TEST 2</h2>
+            <h2>TEST 4</h2>
             <p>
                 Maecenas molestie nulla sit amet felis consectetur auctor. Vestibulum sollicitudin diam maximus mi semper sollicitudin. Duis faucibus
                 congue varius. Vivamus molestie euismod eros, vitae dapibus ante euismod eget. Ut tortor ex, feugiat nec arcu ultricies, tincidunt vehicula
@@ -94,6 +94,7 @@
         <div class="progress-container">
             <img src="static/velo2.png" alt="Vélo" id="bike">
         </div>
+        <div class="road"></div>
     </footer>
 
     <script>
@@ -101,10 +102,17 @@
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             let scrolled = (winScroll / height) * 100;
-    
+
             let bike = document.getElementById("bike");
-            // Fait avancer le vélo selon le scroll
-            bike.style.transform = `translateX(${scrolled}vw)`; 
+
+            let footer = document.querySelector('footer');
+            let footerWidth = footer.clientWidth;
+            let bikeWidth = bike.offsetWidth;
+
+            let maxTranslate = footerWidth - bikeWidth;
+            let translateX = (scrolled / 100) * maxTranslate;
+
+            bike.style.transform = `translateX(${translateX}px)`;
         };
     </script>
 </body>
