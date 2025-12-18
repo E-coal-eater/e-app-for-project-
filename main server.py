@@ -3,38 +3,48 @@ import os
 import sqlite3
 
 app = Flask(__name__)
+TESTUser = 'A'
+TESTPassword = 'A'
+TESTUser2 = 'B'
+TESTPassword2 = 'B'
 VALID_USERNAME1 = 'Prog_derailles'
 VALID_PASSWORD1 = 'siperprogrammeur'
 VALID_USERNAME2 = 'pilot_derailles'
 VALID_PASSWORD2 = 'siperpilote'
+
+DB_NAME = 'user.db'
 
 def init_db():
     # si le fichier de base de données n'existe pas : on crée la base de données
     if not os.path.exists(DB_NAME):
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
+        cursor.execute("PRAGMA foreign_keys = ON")
         cursor.execute('''
         CREATE TABLE velos(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            modele TEXT,
-            parcours_id INTEGER NOT NULL,
-            FOREIGN KEY (parcours_id) REFERENCES parcours(id)
-        );
+            modele TEXT NOT NULL UNIQUE
+        )
         ''')
         cursor.execute('''
         CREATE TABLE parcours (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_velo INTEGER NOT NULL,
-            FOREIGN KEY (id_velo) REFERENCES velos(id),
-            temps INT,
-            vitesse INT,
-            location TEXT,
-            battery INT
-        );
+           id INT NOT NULL,
+           id_velo INT NOT NULL,
+           temps INT NOT NULL,
+           FOREIGN KEY (id_velo) REFERENCES velos(id)
+       )
+       ''')
+        cursor.execute('''
+        CREATE TABLE points(
+            id_parcours INT NOT NULL,
+            temps INT NOT NULL,
+            battery INT,
+            FOREIGN KEY (id_parcours) REFERENCES parcours(id)
+        )
         ''')
-        conn.commit
-        conn.close
-init_db
+        conn.commit()
+        conn.close()
+init_db()
 
 @app.route('/')
 def enter():
@@ -46,9 +56,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if username == VALID_USERNAME1 and password == VALID_PASSWORD1:
+        if (username == VALID_USERNAME1 and password == VALID_PASSWORD1) or (username == TESTUser and password == TESTPassword):
             return redirect(url_for('control'))
-        elif username == VALID_USERNAME2 and password == VALID_PASSWORD2:
+        elif (username == VALID_USERNAME2 and password == VALID_PASSWORD2) or (username == TESTUser2 and password == TESTPassword2):
             return redirect(url_for('pilot'))
         else:
             return redirect(url_for('login', err='invalidLogin'))
@@ -63,11 +73,11 @@ def control():
 def pilot():
     return render_template('pilot-stats.html')
 
-@app.route('/db_test')
+@app.route('/DB', methods=['GET', 'POST'])
 def db():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
-    cursor = conn.cursor
+    cursor = conn.cursor()
 
     #render des 2 databases pour la page HTML
     cursor.execute("SELECT * FROM velos")
@@ -76,10 +86,26 @@ def db():
     cursor.execute("SELECT * FROM parcours")
     parcours = cursor.fetchall()
 
+    cursor.execute("SELECT * FROM points")
+    points = cursor.fetchall()
+ 
     conn.close()
-    
-    return render_template('db_test.hmtl', velos=velos, parcours=parcours)
 
+    if request.method == 'POST':
+        modele = request.form.get('modele')
+        if modele:
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM velos WHERE modele = ?", (modele,))
+            existing_user = cursor.fetchone()
+            if existing_user:
+                message = "Erreur : modèle déja existant !"
+            else:
+                cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
+            conn.commit()
+            conn.close()
+            return redirect('/DB')
+    return render_template('DB.html', velos=velos, parcours=parcours)
 
 if __name__ == '__main__':
     app.run(debug=True)
