@@ -28,10 +28,10 @@ def init_db():
         ''')
         cursor.execute('''
         CREATE TABLE parcours (
-           id INT NOT NULL,
-           id_velo INT NOT NULL,
-           temps INT NOT NULL,
-           FOREIGN KEY (id_velo) REFERENCES velos(id)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_velo INT NOT NULL,
+            temps INT NOT NULL,
+            FOREIGN KEY (id_velo) REFERENCES velos(id)
        )
        ''')
         cursor.execute('''
