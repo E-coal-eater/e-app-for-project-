@@ -42,8 +42,8 @@ def init_db():
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 init_db()
 
 @app.route('/')
@@ -93,6 +93,7 @@ def db():
 
     if request.method == 'POST':
         modele = request.form.get('modele')
+        parcours_id = request.form.get('id_parcours')
         if modele:
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
