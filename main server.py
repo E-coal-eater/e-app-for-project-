@@ -29,7 +29,7 @@ def init_db():
         cursor.execute('''
         CREATE TABLE parcours (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_velo INT NOT NULL,
+            id_velo INT,
             temps INT NOT NULL,
             FOREIGN KEY (id_velo) REFERENCES velos(id)
        )
@@ -42,8 +42,8 @@ def init_db():
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 init_db()
 
 @app.route('/')
@@ -99,7 +99,7 @@ def db():
             cursor.execute("SELECT * FROM velos WHERE modele = ?", (modele,))
             existing_user = cursor.fetchone()
             if existing_user:
-                message = "Erreur : modèle déja existant !"
+                return redirect(url_for('DB', err='invalidModele'))
             else:
                 cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
             conn.commit()

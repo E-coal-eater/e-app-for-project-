@@ -10,6 +10,9 @@
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
+    {% if err == 'invalidModele' %}
+        <div class="error">Modele déja existant</div>
+    {% endif %}
     <form method="POST">
         <input type="text" name="modele" placeholder="Modèle du vélo" required>
     </form>
