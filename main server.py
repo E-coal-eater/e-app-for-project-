@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 import sqlite3
+import serial
 
 app = Flask(__name__)
 TESTUser = 'A'
@@ -74,7 +75,7 @@ def pilot():
     return render_template('pilot-stats.html')
 
 @app.route('/DB', methods=['GET', 'POST'])
-def db():
+def DB():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -105,8 +106,10 @@ def db():
                 cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
             conn.commit()
             conn.close()
-            return redirect('/DB')
-    return render_template('DB.html', velos=velos, parcours=parcours)
+        return redirect(url_for('DB'))
+
+    err = request.args.get('err')
+    return render_template('DB.html', velos=velos, parcours=parcours, err=err)
 
 if __name__ == '__main__':
     app.run(debug=True)
