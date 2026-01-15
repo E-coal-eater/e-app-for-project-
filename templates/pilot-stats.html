@@ -20,7 +20,9 @@
         <section class="main-panel">
             <h2>Zone d'affichage</h2>
             <div class="content-area" id="displayArea">
-                <!-- Zone totalement vide, modifiable -->
+                <button id="toggleButton" onclick="ToggleAcquisition()">Start Acquisition</button>
+                <p>Status: <span id="statusText"></span></p>
+                <script src="{{ url_for('static/pilot-acquisition.js') }}"></script>
             </div>
         </section>
     </main>

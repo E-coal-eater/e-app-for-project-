@@ -1,34 +1,35 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 import sqlite3
-import serial
 import threading
-
+import time
 
 app = Flask(__name__)
 DB_NAME = 'user.db'
 
-#---------------- Database initialisation ---------------------------
+# ---------------- Database Initialization ----------------
 def init_db():
-    # si le fichier de base de données n'existe pas : on crée la base de données
     if not os.path.exists(DB_NAME):
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
+        
         cursor.execute('''
         CREATE TABLE velos(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             modele TEXT NOT NULL UNIQUE
         )
         ''')
+        
         cursor.execute('''
-        CREATE TABLE parcours (
+        CREATE TABLE parcours(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_velo INT,
             temps INT,
             FOREIGN KEY (id_velo) REFERENCES velos(id)
-       )
-       ''')
+        )
+        ''')
+        
         cursor.execute('''
         CREATE TABLE points(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,82 +39,33 @@ def init_db():
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
+        
         conn.commit()
         conn.close()
+
 init_db()
 
-#------------------------ Arduino Part -----------------------------------
+# ---------------- Pilot Acquisition ----------------
+acquisition_running = False
 
-SERIAL_PORT = 'COM31'
-BAUDRATE = 9600
-
-reccording = False
-current_parcours_id = None
-last_temps = 0
-
-def serial_listener():
-    global reccording, current_parcours_id, last_temps
-
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1)
-    except:
-        print("Serial not connected")
-        return
+def acquisition_loop():
+    global acquisition_running
     
-    conn = sqlite3.connect(DB_NAME, check_same_thread=False)
-    cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys ON")
-
     while True:
-        line = ser.readline().decode().strip()
-        if not line:
-            continue
-        
-        if line == 'BTN':
-
-            if not reccording:
-                reccording = True
-
-                cursor.execute("SELECT id FROM velos ORDER BY id DESC LIMIT 1")
-                row = cursor.fetchone()
-                if not row:
-                    print("no velo in DB")
-                    reccording = False
-                    continue
-                
-                last_velo_id = row[0]
-
-                cursor.execute("INSERT INTO parcours(id_velo, temps) VALUE(?, NULL)", (last_velo_id))
-                current_parcours_id = cursor.lastrowid
-                conn.commit()
-
-                print("Started Parcours", current_parcours_id)
+        if acquisition_running:
+            # Placeholder for Bluetooth acquisition
+            data = None
+            if data is not None:
+                # Insert real data here
+                pass
             else:
-                reccording = False
+                # No data yet → do nothing
+                pass
+        time.sleep(1)
 
-                cursor.execute("""
-                UPDATE parcours
-                SET temps = ?
-                WHERE id = ?
-                """, (last_temps, current_parcours_id))
-                
-                conn.commit()
-                print("Parcours stopped", current_parcours_id, "Final Time:", last_temps)
-                current_parcours_id = None
-        elif line.startswith("DATA") and reccording:
-            _, temps, battery = line.split(",")
+threading.Thread(target=acquisition_loop, daemon=True).start()
 
-            last_temps = int(temps)
-
-            cursor.execute("""
-            INSERT INTO points (id_parcours, temps, battery)
-            VALUES (?,?,?)
-            """, (current_parcours_id, temps, battery))
-            conn.commit()
-
-threading.Thread(target=serial_listener, daemon=True) .start()
-
-#------------------------Web Part ----------------------------------------
+# ---------------- Authentication ----------------
 TESTUser = 'A'
 TESTPassword = 'A'
 TESTUser2 = 'B'
@@ -122,6 +74,7 @@ VALID_USERNAME1 = 'Prog_derailles'
 VALID_PASSWORD1 = 'siperprogrammeur'
 VALID_USERNAME2 = 'pilot_derailles'
 VALID_PASSWORD2 = 'siperpilote'
+
 @app.route('/')
 def enter():
     return render_template('main-page.html')
@@ -138,6 +91,7 @@ def login():
             return redirect(url_for('pilot'))
         else:
             return redirect(url_for('login', err='invalidLogin'))
+    
     err = request.args.get('err')
     return render_template('login.html', err=err)
 
@@ -145,17 +99,28 @@ def login():
 def control():
     return render_template('control.html')
 
+# ---------------- Pilot Page ----------------
 @app.route('/pilot')
 def pilot():
-    return render_template('pilot-stats.html')
+    return render_template('pilot-stats.html', acquisition_running=acquisition_running)
 
-@app.route('/DB', methods=['GET', 'POST'])
+@app.route('/toggle_acquisition', methods=['POST'])
+def toggle_acquisition():
+    global acquisition_running
+    acquisition_running = not acquisition_running
+    return '', 204  # No redirect; pilot page JS handles live update
+
+@app.route('/acquisition_status')
+def acquisition_status():
+    return {"running": acquisition_running}
+
+# ---------------- DB Page ----------------
+@app.route('/DB', methods=['GET','POST'])
 def DB():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    #render des 3 databases pour la page HTML
     cursor.execute("SELECT * FROM velos")
     velos = cursor.fetchall()
 
@@ -169,35 +134,40 @@ def DB():
 
     if request.method == 'POST':
         modele = request.form.get('modele')
-        parcours_id = request.form.get('id_parcours')
         if modele:
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM velos WHERE modele = ?", (modele,))
-            existing_user = cursor.fetchone()
-            if existing_user:
+            if cursor.fetchone():
+                conn.close()
                 return redirect(url_for('DB', err='invalidModele'))
-            else:
-                cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
+            cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
             conn.commit()
             conn.close()
-        return redirect(url_for('DB'))
-    err = request.args.get('err')
-    return render_template('DB.html', velos=velos, parcours=parcours, err=err)
+            return redirect(url_for('DB'))
 
-@app.route('livePoints')
-def livePoints():
+    err = request.args.get('err')
+    return render_template('DB.html', velos=velos, parcours=parcours, points=points, err=err)
+
+# ---------------- DB JSON Endpoint for AJAX ----------------
+@app.route('/db_data')
+def db_data():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    cursor.execute("""
-    SELECT points.id, points.id_parcours, points.temps, points.battery
-    FROM points
-    ORDER BY points.id ASC
-    """)
-    data = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT * FROM velos")
+    velos = [dict(r) for r in cursor.fetchall()]
+
+    cursor.execute("SELECT * FROM parcours")
+    parcours = [dict(r) for r in cursor.fetchall()]
+
+    cursor.execute("SELECT * FROM points")
+    points = [dict(r) for r in cursor.fetchall()]
+
     conn.close()
-    return data
+    return {"velos": velos, "parcours": parcours, "points": points}
+
+# ---------------- Run Flask ----------------
 if __name__ == '__main__':
     app.run(debug=True)

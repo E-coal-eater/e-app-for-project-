@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-        const form = document.querySelector("form");
-        form.addEventListener("submit", () => {
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
-        });
-    </script>
     <meta charset="UTF-8">
     <title>DB TEST</title>
     <link rel="icon" type="image/x-icon" href="static/goober.png"/>
@@ -25,52 +17,11 @@
         <input type="text" name="modele" placeholder="Modèle du vélo" required>
     </form>
     <h1>Vélos</h1>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Modèle</th>
-        </tr>
-        {%for velo in velos%}
-        <tr>
-            <td>{{ velo["id"] }}</td>
-            <td>{{ velo["modele"] or '-'}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <hr>
-
+    <table id="velosTable" border="1"></table>
     <h1>Parcours</h1>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>ID_vélo</th>
-            <th>Temps</th>
-        </tr>
-        {% for parcours in parcours %}
-        <tr>
-            <td>{{ parcours["id"] }}</td>
-            <td>{{ parcours["id_velo"] }}</td>
-            <td>{{ parcours["temps"] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <hr>
+    <table id="parcoursTable" border="1"></table>
     <h1>Points</h1>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Temps Total</th>
-            <th>Batterie</th>
-        </tr>
-        {% for points in points %}
-        <tr>
-            <td>{{ points["id"] }}</td>
-            <td>{{ points["temps"] }}</td>
-            <td>{{ points["battery"] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <table id="pointsTable" border="1"></table>
+    <script src="{{% url_for('static/DB-refresh.js') %}}"></script>
 </body>
 </html>
