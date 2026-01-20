@@ -3,6 +3,7 @@ import os
 import sqlite3
 import threading
 import time
+import serial
 
 app = Flask(__name__)
 DB_NAME = 'user.db'
@@ -44,6 +45,8 @@ def init_db():
         conn.close()
 
 init_db()
+
+# ---------------- Arduino acquisition --------------
 
 # ---------------- Pilot Acquisition ----------------
 acquisition_running = False

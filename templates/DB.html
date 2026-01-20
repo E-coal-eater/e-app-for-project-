@@ -2,26 +2,30 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>DB TEST</title>
-    <link rel="icon" type="image/x-icon" href="static/goober.png"/>
+    <title>Database Test</title>
+    <script src="{{ url_for('static', filename='db_refresh.js') }}"></script>
 </head>
 <body>
-    <h1>Ajouter nouveau modèle de vélo</h1>
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
-    {% if err == 'invalidModele' %}
-        <div class="error">Modele déja existant</div>
-    {% endif %}
-    <form method="POST">
-        <input type="text" name="modele" placeholder="Modèle du vélo" required>
-    </form>
-    <h1>Vélos</h1>
-    <table id="velosTable" border="1"></table>
-    <h1>Parcours</h1>
-    <table id="parcoursTable" border="1"></table>
-    <h1>Points</h1>
-    <table id="pointsTable" border="1"></table>
-    <script src="{{% url_for('static/DB-refresh.js') %}}"></script>
+
+<h2>Add Velo</h2>
+
+{% if err == 'invalidModele' %}
+    <p style="color:red;">Modele already exists</p>
+{% endif %}
+
+<form method="POST">
+    <input type="text" name="modele" required>
+    <button type="submit">Add</button>
+</form>
+
+<h2>Velos</h2>
+<table id="velosTable" border="1"></table>
+
+<h2>Parcours</h2>
+<table id="parcoursTable" border="1"></table>
+
+<h2>Points</h2>
+<table id="pointsTable" border="1"></table>
+
 </body>
 </html>

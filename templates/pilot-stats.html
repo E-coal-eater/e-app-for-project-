@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Console d'affichage</title>
-    <link rel="icon" type="image/x-icon" href="static/goober.png"/>
     <link rel="stylesheet" href="static/pilot-stats.css">
+    <script src="{{ url_for('static', filename='pilot.js') }}"></script>
 </head>
 
 <body>
@@ -21,8 +21,15 @@
             <h2>Zone d'affichage</h2>
             <div class="content-area" id="displayArea">
                 <button id="toggleButton" onclick="ToggleAcquisition()">Start Acquisition</button>
-                <p>Status: <span id="statusText"></span></p>
-                <script src="{{ url_for('static/pilot-acquisition.js') }}"></script>
+                <p>Status: 
+                    <span id="statusText">
+                        {% if acquisition_running %}
+                            RUNNING
+                        {% else %}
+                            STOPPED
+                        {% endif %}
+                    </span>
+                </p>
             </div>
         </section>
     </main>
