@@ -51,7 +51,7 @@ html, body {
 .console {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 1fr 2fr 1.6fr;
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -107,11 +107,66 @@ html, body {
 /* ===== Panneau de droite (contrôles) ===== */
 .control-area {
     flex: 1;
-    border: 1px dashed var(--border-color);
-    border-radius: var(--radius);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #555;
-    font-style: italic;
+    flex-direction: column;   /* <-- vertical stacking */
+    gap: 15px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* Each database section */
+.db-block {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 8px;
+    background-color: #0b0f14;
+}
+
+/* Add form layout */
+.add-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.add-form input {
+    flex: 1;
+    background-color: #161b22;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.add-form button {
+    background-color: var(--accent);
+    border: none;
+    color: black;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-form button:hover {
+    background-color: #66ccff;
+}
+
+/* Tables full width */
+.control-area table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+}
+
+.control-area th, 
+.control-area td {
+    border: 1px solid var(--border-color);
+    padding: 3px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.control-area th {
+    background-color: #161b22;
+    color: var(--accent);
 }

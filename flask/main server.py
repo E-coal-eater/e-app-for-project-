@@ -7,6 +7,10 @@ import serial
 
 app = Flask(__name__)
 DB_NAME = 'user.db'
+arduino_connected = False
+ser = None
+bluetooth_connected = False
+acquisition_running = False
 
 # ---------------- Database Initialization ----------------
 def init_db():
@@ -37,6 +41,7 @@ def init_db():
             id_parcours INT NOT NULL,
             temps INT,
             battery INT,
+            position TEXT,
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
@@ -47,7 +52,18 @@ def init_db():
 init_db()
 
 # ---------------- Arduino acquisition --------------
+def connect_arduino():
+    global ser, arduino_connected
+    try:
+        ser = serial.Serial("COM3", 9600, timeout=1)  # ← change COM port
+        arduino_connected = True
+        print("Arduino connected")
+    except:
+        arduino_connected = False
+        ser = None
+        print("Arduino NOT connected")
 
+connect_arduino()
 # ---------------- Pilot Acquisition ----------------
 acquisition_running = False
 
@@ -100,26 +116,6 @@ def login():
 
 @app.route('/control')
 def control():
-    return render_template('control.html')
-
-# ---------------- Pilot Page ----------------
-@app.route('/pilot')
-def pilot():
-    return render_template('pilot-stats.html', acquisition_running=acquisition_running)
-
-@app.route('/toggle_acquisition', methods=['POST'])
-def toggle_acquisition():
-    global acquisition_running
-    acquisition_running = not acquisition_running
-    return '', 204  # No redirect; pilot page JS handles live update
-
-@app.route('/acquisition_status')
-def acquisition_status():
-    return {"running": acquisition_running}
-
-# ---------------- DB Page ----------------
-@app.route('/DB', methods=['GET','POST'])
-def DB():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -150,8 +146,29 @@ def DB():
             return redirect(url_for('DB'))
 
     err = request.args.get('err')
-    return render_template('DB.html', velos=velos, parcours=parcours, points=points, err=err)
+    return render_template('control.html', velos=velos, parcours=parcours, points=points, err=err)
 
+# ---------------- Pilot Page ----------------
+@app.route('/pilot')
+def pilot():
+    return render_template('pilot-stats.html', acquisition_running=acquisition_running)
+
+@app.route('/toggle_acquisition', methods=['POST'])
+def toggle_acquisition():
+    global acquisition_running
+    
+    # No Bluetooth / hardware yet
+    if not bluetooth_connected:
+        return {"ok": False, "error": "No Bluetooth device connected"}
+
+    acquisition_running = not acquisition_running
+    return {"ok": True, "running": acquisition_running}
+
+@app.route('/acquisition_status')
+def acquisition_status():
+    return {"running": acquisition_running,
+            "connected" : bluetooth_connected}
+    
 # ---------------- DB JSON Endpoint for AJAX ----------------
 @app.route('/db_data')
 def db_data():

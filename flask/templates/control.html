@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Console de contrôle</title>
     <link rel="stylesheet" href="static/control.css"/>
+    <script src="{{ url_for('static', filename='db_refresh.js') }}"></script>
 </head>
 <body>
     <header class="top-bar">
@@ -29,10 +30,37 @@
         </section>
 
         <section class="right-panel">
-            <h2>Contrôles</h2>
+            <h2>Database</h2>
             <div class="control-area">
-                <a href="/DB">TEST base de données</a>
-                <!-- Tu peux ajouter tes boutons ou modules ici -->
+
+                <div class="db-block">
+                    <h3>Add Velo</h3>
+
+                    {% if err == 'invalidModele' %}
+                        <p style="color:red;">Modele déjà existant</p>
+                    {% endif %}
+
+                    <form method="POST" class="add-form">
+                        <input type="text" name="modele" placeholder="New vélo model" required>
+                        <button type="submit">Add</button>
+                    </form>
+                </div>
+
+                <div class="db-block">
+                    <h3>Velos</h3>
+                    <table id="velosTable"></table>
+                </div>
+
+                <div class="db-block">
+                    <h3>Parcours</h3>
+                    <table id="parcoursTable"></table>
+                </div>
+
+                <div class="db-block">
+                    <h3>Points</h3>
+                    <table id="pointsTable"></table>
+                </div>
+
             </div>
         </section>
     </main>
