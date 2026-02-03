@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 import sqlite3
 import threading
 import time
 import serial
+import math
 
 app = Flask(__name__)
 DB_NAME = 'user.db'
@@ -11,6 +12,8 @@ arduino_connected = False
 ser = None
 bluetooth_connected = False
 acquisition_running = False
+last_gps_point = None
+current_parcours_id = None
 
 # ---------------- Database Initialization ----------------
 def init_db():
@@ -42,6 +45,7 @@ def init_db():
             temps INT,
             battery INT,
             position TEXT,
+            distance REAL,
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
@@ -65,6 +69,56 @@ def connect_arduino():
 
 connect_arduino()
 # ---------------- Pilot Acquisition ----------------
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371000  # Earth radius in meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi/2)**2 + \
+        math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+
+    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+@app.route("/gps_update", methods=["POST"])
+def gps_update():
+    global last_gps_point, current_parcours_id
+
+    data = request.json
+    lat = data["latitude"]
+    lon = data["longitude"]
+
+    distance = 0
+
+    if last_gps_point:
+        distance = haversine(
+            last_gps_point["lat"],
+            last_gps_point["lon"],
+            lat,
+            lon
+        )
+
+    last_gps_point = {"lat": lat, "lon": lon}
+
+    if current_parcours_id:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO points (id_parcours, temps, battery, position, distance)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            current_parcours_id,
+            int(time.time()),
+            None,
+            f"{lat},{lon}",
+            distance
+        ))
+        conn.commit()
+        conn.close()
+
+    return jsonify({"status": "ok", "distance": distance})
+
 acquisition_running = False
 
 def acquisition_loop():
@@ -114,7 +168,7 @@ def login():
     err = request.args.get('err')
     return render_template('login.html', err=err)
 
-@app.route('/control')
+@app.route('/control', methods=['GET','POST'])
 def control():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -139,11 +193,11 @@ def control():
             cursor.execute("SELECT * FROM velos WHERE modele = ?", (modele,))
             if cursor.fetchone():
                 conn.close()
-                return redirect(url_for('DB', err='invalidModele'))
+                return redirect(url_for('control', err='invalidModele'))
             cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
             conn.commit()
             conn.close()
-            return redirect(url_for('DB'))
+            return redirect(url_for('control'))
 
     err = request.args.get('err')
     return render_template('control.html', velos=velos, parcours=parcours, points=points, err=err)
@@ -158,17 +212,16 @@ def toggle_acquisition():
     global acquisition_running
     
     # No Bluetooth / hardware yet
-    if not bluetooth_connected:
-        return {"ok": False, "error": "No Bluetooth device connected"}
+    #if not bluetooth_connected:
+    #    return {"ok": False, "error": "No Bluetooth device connected"}
 
     acquisition_running = not acquisition_running
     return {"ok": True, "running": acquisition_running}
 
 @app.route('/acquisition_status')
 def acquisition_status():
-    return {"running": acquisition_running,
-            "connected" : bluetooth_connected}
-    
+    return {"running": acquisition_running, "connected": bluetooth_connected}
+
 # ---------------- DB JSON Endpoint for AJAX ----------------
 @app.route('/db_data')
 def db_data():
@@ -190,4 +243,4 @@ def db_data():
 
 # ---------------- Run Flask ----------------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="{{ url_for('static', filename='main-page.css') }}"/>
     <title>Projet CYGO</title>
-    <link rel="stylesheet" href="static/styles.css"/>
-    <link rel="stylesheet" href="static/main-page.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main-page.css') }}"/>
 </head>
 <body>
     <header>

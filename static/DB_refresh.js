@@ -19,9 +19,9 @@ function refreshDB() {
 
             // ----- POINTS -----
             let pointsTable = document.getElementById("pointsTable");
-            pointsTable.innerHTML = `<tr><th>ID</th><th>ID Parcours</th><th>Temps</th><th>Batterie</th></tr><tr><th>Position</th></tr>`;
+            pointsTable.innerHTML = `<tr><th>ID</th><th>ID Parcours</th><th>Temps</th><th>Batterie</th><th>Position</th><th>Distance</th></tr>`;
             data.points.forEach(pt => {
-                pointsTable.innerHTML += `<tr><td>${pt.id}</td><td>${pt.id_parcours}</td><td>${pt.temps}</td><td>${pt.battery ?? '-'}</td><td>${pt.position ?? '-'}</td></tr>`;
+                pointsTable.innerHTML += `<tr><td>${pt.id}</td><td>${pt.id_parcours}</td><td>${pt.temps}</td><td>${pt.battery ?? '-'}</td><td>${pt.position ?? '-'}</td><td>${pt.distance ?? '-'}</td></tr>`;
             });
 
         })
