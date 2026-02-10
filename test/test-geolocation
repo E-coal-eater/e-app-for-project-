@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Geolocation</h1>
+        <button onclick="getLocation()">Get Location</button>
+        
+        <div class="info">
+            <div class="label">Latitude</div>
+            <div class="value" id="latitude">-</div>
+        </div>
+        
+        <div class="info">
+            <div class="label">Longitude</div>
+            <div class="value" id="longitude">-</div>
+        </div>
+        
+        <div class="info">
+            <div class="label">Heading (Orientation)</div>
+            <div class="value" id="heading">-</div>
+        </div>
+        
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(showPosition, showError);
+            } else {
+                document.getElementById('error').innerText = 'Geolocation not supported';
+            }
+        }
+
+        function showPosition(position) {
+            document.getElementById('latitude').innerText = position.coords.latitude.toFixed(6);
+            document.getElementById('longitude').innerText = position.coords.longitude.toFixed(6);
+            document.getElementById('heading').innerText = position.coords.heading ? position.coords.heading.toFixed(2) + '°' : 'N/A';
+            document.getElementById('error').innerText = '';
+        }
+
+        function showError(error) {
+            document.getElementById('error').innerText = 'Error: ' + error.message;
+        }
+    </script>
+</body>
+</html>
