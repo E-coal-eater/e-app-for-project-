@@ -90,7 +90,7 @@ function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
             latitude: lat,
             longitude: lon,
             instant_speed_ms: parseFloat(instantSpeed.toFixed(4)),
-            average_speed_ms: parseFloat(averageSpeed.toFixed(4)),
+            average_speed_ms: parseFloat(averageSpeed.toFixed(4))
         })
     });
 }
