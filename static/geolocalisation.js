@@ -46,8 +46,11 @@ function showPosition(position) {
 
     document.getElementById('latitude').innerText = lat.toFixed(6);
     document.getElementById('longitude').innerText = lon.toFixed(6);
-    document.getElementById('heading').innerText = position.coords.heading ? position.coords.heading.toFixed(2) + '°' : 'N/A';
+    document.getElementById('heading').innerText = position.coords.heading
+        ? position.coords.heading.toFixed(2) + '°'
+        : 'N/A';
     document.getElementById('error').innerText = '';
+
     if (lastPosition && lastTimestamp) {
         const distance = haversineDistance(lastPosition.lat, lastPosition.lon, lat, lon);
         const timeDelta = (now - lastTimestamp) / 1000;
@@ -59,8 +62,28 @@ function showPosition(position) {
 
     lastPosition = { lat, lon };
     lastTimestamp = now;
+
+    // Send to Flask
+    sendPosition(lat, lon, lastInstantSpeed, totalDistance / ((Date.now() - startTime) / 1000));
 }
 
 function showError(error) {
     document.getElementById('error').innerText = 'Error: ' + error.message;
+}
+
+function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
+    fetch("/gps_update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            latitude: lat,
+            longitude: lon,
+            instant_speed_ms: parseFloat(instantSpeed.toFixed(4)),
+            instant_speed_kmh: parseFloat((instantSpeed * 3.6).toFixed(4)),
+            average_speed_ms: parseFloat(averageSpeed.toFixed(4)),
+            average_speed_kmh: parseFloat((averageSpeed * 3.6).toFixed(4))
+        })
+    });
 }
