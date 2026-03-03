@@ -18,11 +18,15 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 }
 
 function startTracking() {
-    if (tracking) return; // Prevent multiple starts on double-click
+    if (tracking) return;
     tracking = true;
+
+    document.getElementById('tracking-status').innerText = 'true';
 
     if (!navigator.geolocation) {
         document.getElementById('error').innerText = 'Geolocation not supported';
+        tracking = false;
+        document.getElementById('tracking-status').innerText = 'false';
         return;
     }
 
