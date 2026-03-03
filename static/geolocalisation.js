@@ -3,6 +3,7 @@ let lastTimestamp = null;
 let totalDistance = 0;
 let startTime = null;
 let lastInstantSpeed = 0;
+let tracking = false;
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000;
@@ -17,6 +18,9 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 }
 
 function startTracking() {
+    if (tracking) return; // Prevent multiple starts on double-click
+    tracking = true;
+
     if (!navigator.geolocation) {
         document.getElementById('error').innerText = 'Geolocation not supported';
         return;
@@ -88,6 +92,3 @@ function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
         })
     });
 }
-
-// Start automatically on page load
-window.addEventListener('load', startTracking);

@@ -9,6 +9,8 @@
     <div class="container">
         <h1>Your Geolocation</h1>
 
+        <button onclick="startTracking()">Start Tracking</button>
+
         <div class="info">
             <div class="label">Latitude</div>
             <div class="value" id="latitude">-</div>
@@ -16,7 +18,7 @@
 
         <div class="info">
             <div class="label">Longitude</div>
-            <div class="value" id="longitude">-</div>
+            <div class="value" id="heading">-</div>
         </div>
 
         <div class="info">
@@ -37,6 +39,6 @@
         <div id="error" class="error"></div>
     </div>
 
-    <script src="gps.js"></script>
+    <script src="geolocation.js"></script>
 </body>
 </html>
