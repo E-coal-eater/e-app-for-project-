@@ -16,7 +16,7 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function getLocation() {
+function startTracking() {
     if (!navigator.geolocation) {
         document.getElementById('error').innerText = 'Geolocation not supported';
         return;
@@ -31,11 +31,15 @@ function getLocation() {
     });
 
     setInterval(() => {
-        if (!startTime) return;
+        if (!startTime || !lastPosition) return;
+
         const elapsedSeconds = (Date.now() - startTime) / 1000;
         const averageSpeed = elapsedSeconds > 0 ? totalDistance / elapsedSeconds : 0;
+
         document.getElementById('instant-speed').innerText = (lastInstantSpeed * 3.6).toFixed(2) + ' km/h';
         document.getElementById('average-speed').innerText = (averageSpeed * 3.6).toFixed(2) + ' km/h';
+
+        sendPosition(lastPosition.lat, lastPosition.lon, lastInstantSpeed, averageSpeed);
     }, 1000);
 }
 
@@ -62,9 +66,6 @@ function showPosition(position) {
 
     lastPosition = { lat, lon };
     lastTimestamp = now;
-
-    // Send to Flask
-    sendPosition(lat, lon, lastInstantSpeed, totalDistance / ((Date.now() - startTime) / 1000));
 }
 
 function showError(error) {
@@ -87,3 +88,6 @@ function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
         })
     });
 }
+
+// Start automatically on page load
+window.addEventListener('load', startTracking);
