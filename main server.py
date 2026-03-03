@@ -34,6 +34,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_velo INT,
             temps INT,
+            vitesse_moyenne REAL,
+            FOREIGN KEY (vitesse_moyenne) REFERENCES points(vitesse_moyenne),
             FOREIGN KEY (id_velo) REFERENCES velos(id)
         )
         ''')
@@ -46,6 +48,8 @@ def init_db():
             battery INT,
             position TEXT,
             distance REAL,
+            vitesse REAL,
+            vitesse_moyenne REAL,
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
@@ -88,6 +92,8 @@ def gps_update():
     data = request.json
     lat = data["latitude"]
     lon = data["longitude"]
+    instant_speed = data["instant_speed_ms"]
+    average_speed = data["average_speed_ms"]
 
     distance = 0
 
@@ -105,14 +111,16 @@ def gps_update():
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO points (id_parcours, temps, battery, position, distance)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO points (id_parcours, temps, battery, position, distance, vitesse, vitesse_moyenne)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             current_parcours_id,
             int(time.time()),
             None,
             f"{lat},{lon}",
-            distance
+            distance,
+            instant_speed,
+            average_speed
         ))
         conn.commit()
         conn.close()
