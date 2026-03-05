@@ -87,10 +87,10 @@ function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            latitude: lat,
-            longitude: lon,
-            instant_speed_ms: parseFloat(instantSpeed.toFixed(4)),
-            average_speed_ms: parseFloat(averageSpeed.toFixed(4))
+            latitude:12, //lat,
+            longitude:67, //lon,
+            instant_speed_ms:2.6, //parseFloat(instantSpeed.toFixed(4)),
+            average_speed_ms:55, //parseFloat(averageSpeed.toFixed(4))
         })
     });
 }

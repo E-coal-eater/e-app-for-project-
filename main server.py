@@ -86,13 +86,17 @@ def haversine(lat1, lon1, lat2, lon2):
 
     return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-@app.route("/gps_update", methods=["POST"])
+@app.route("/gps_update", methods=['GET','POST'])
 def gps_update():
     global last_gps_point, current_parcours_id
-
+    print("gps_update called")
+    print(request.json)
     data = request.json
+    print(data)
     lat = data["latitude"]
     lon = data["longitude"]
+    print("lat:", lat, "lon:", lon)
+
     instant_speed = data["instant_speed_ms"]
     average_speed = data["average_speed_ms"]
 
