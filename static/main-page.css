@@ -1,55 +1,150 @@
-/* ===== Mise en page alternative ===== */
-.console {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px;
-    width: 100%;
+/* ===== Landing Page ===== */
+/* Link shared.css first, then this file */
+
+/* ===== Landing-specific Variables ===== */
+:root {
+    --cg-color-1: #0078d7;
+    --cg-color-2: #00c6ff;
+    --cg-color-3: #f7faff;
+    --cg-color-4: #e8f4ff;
+    --cg-color-5: #333;
+    --cg-color-6: #ffffff;
+    --cg-shadow: rgba(0,0,0,0.15);
 }
 
-/* ===== Style des panneaux ===== */
-.console section {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+/* --------- HEADER --------- */
+header {
+    text-align: center;
+    background: linear-gradient(135deg, var(--cg-color-1), var(--cg-color-2));
+    color: var(--cg-color-6);
+    padding: 50px 20px;
+    position: relative;
 }
 
-.console h2 {
-    color: var(--accent);
-    margin: 0 0 10px 0;
+header h1 {
+    font-size: 2.8em;
+    margin: 0;
+    font-weight: 700;
 }
 
-/* ===== Grande zone d'affichage vide ===== */
-.content-area {
-    flex: 1;
+header a {
+    color: var(--cg-color-6);
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    transition: background 0.3s;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+header a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --------- CONTENU --------- */
+.section {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #999;
-    font-size: 1.2rem;
+    padding: 60px 10%;
+    flex-wrap: wrap;
+    background-color: var(--cg-color-3);
+}
+
+.text {
+    flex: 1;
+    padding: 20px;
+    min-width: 280px;
+    font-size: large;
+    color: var(--cg-color-5);
+}
+
+.text h2 {
+    color: var(--cg-color-1);
+    margin-bottom: 10px;
+}
+
+.images {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.images img {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--cg-shadow);
+    transition: transform 0.3s ease;
+}
+
+.images img:hover {
+    transform: scale(1.05);
+}
+
+/* --------- BARRE DE PROGRESSION (VÉLO) --------- */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
+    height: 100px;
+    background: transparent;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    z-index: 10;
 }
 
-/* ===== MODE MOBILE PAYSAGE ===== */
-@media (max-width: 900px) and (orientation: landscape) {
-    .console {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
-
-    .right-panel {
-        grid-column: 1 / 3;
-    }
+.road {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-color: #323739;
 }
 
+#bike {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.1s linear;
+    z-index: 11;
+}
+
+/* --------- RESPONSIVE --------- */
 @media (max-width: 768px) {
-    .console {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
+    .paragraph-left, .paragraph-right {
+        flex-direction: column !important;
+        text-align: center;
+    }
+
+    .images img {
+        width: 70%;
+    }
+
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    header a {
+        position: static;
+        display: inline-block;
+        margin-top: 15px;
+    }
+
+    .section {
+        padding: 40px 5%;
+        flex-direction: column;
     }
 }

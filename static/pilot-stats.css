@@ -1,36 +1,7 @@
-/* ===== Structure générale ===== */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: var(--font);
-    display: flex;
-    flex-direction: column;
-}
+/* ===== Console Page - Single Panel (Alt Layout) ===== */
+/* Link shared.css first, then this file */
 
-/* ===== Barre supérieure ===== */
-.top-bar {
-    background-color: var(--panel-bg);
-    border-bottom: 1px solid var(--border-color);
-    padding: 0.8rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.top-bar h1 {
-    margin: 0;
-    color: var(--accent);
-}
-
-.top-bar nav a {
-    color: var(--accent);
-    text-decoration: none;
-}
-
-/* ===== Mise en page principale ===== */
+/* ===== Mise en page alternative ===== */
 .console {
     flex: 1;
     display: flex;
@@ -48,7 +19,7 @@ html, body {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    width: 100%
+    width: 100%;
 }
 
 .console h2 {
@@ -76,5 +47,12 @@ html, body {
 
     .right-panel {
         grid-column: 1 / 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .console {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
     }
 }
