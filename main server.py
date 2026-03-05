@@ -35,7 +35,6 @@ def init_db():
             id_velo INT,
             temps INT,
             vitesse_moyenne REAL,
-            FOREIGN KEY (vitesse_moyenne) REFERENCES points(vitesse_moyenne),
             FOREIGN KEY (id_velo) REFERENCES velos(id)
         )
         ''')
@@ -50,6 +49,8 @@ def init_db():
             distance REAL,
             vitesse REAL,
             vitesse_moyenne REAL,
+            FOREIGN KEY (temps) REFERENCES parcours(temps),
+            FOREIGN KEY (vitesse_moyenne) REFERENCES parcours(vitesse_moyenne),
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')

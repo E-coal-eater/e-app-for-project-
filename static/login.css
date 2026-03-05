@@ -1,55 +1,32 @@
-/* ======== Variables de thème ======== */
+/* ===== Login-specific Variables ===== */
 :root {
-    --primary-color: #007BFF;       /* Bleu principal */
-    --primary-hover: #0056b3;       /* Bleu plus foncé pour hover */
-    --background-color: #e9eef6;    /* Gris-bleu clair du fond */
-    --box-bg: #ffffff;              /* Fond du login box */
-    --text-color: #222;             /* Couleur du texte */
-    --input-border: #ccc;           /* Bordure des champs */
-    --radius: 15px;                 /* Rayon de bordure standard */
-    --transition-speed: 0.3s;       /* Vitesse d’animation */
+    --primary-color: #007BFF;
+    --primary-hover: #0056b3;
+    --background-color: #e9eef6;
+    --box-bg: #ffffff;
+    --text-color-dark: #222;
+    --input-border: #ccc;
+    --radius-lg: 15px;
+    --font-sans: "Segoe UI", Roboto, sans-serif;
 }
 
-/* ======== Page ======== */
+/* ===== Page background override for login ===== */
 html, body {
-    height: 100%;
-    margin: 0;
     background-color: var(--background-color);
-    font-family: "Segoe UI", Roboto, sans-serif;
-    display: flex;
+    font-family: var(--font-sans);
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 }
 
-.top-bar {
-    background-color: var(--panel-bg);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 1.5rem;
-}
-
-.top-bar nav a {
-    color: var(--accent);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.top-bar nav a:hover {
-    color: #66ccff;
-}
-
-/* ======== Boîte de login ======== */
+/* ===== Boîte de login ===== */
 .login-box {
     background-color: var(--box-bg);
     width: 400px;
     padding: 40px 30px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     text-align: center;
-    transition: transform var(--transition-speed) ease;
+    transition: transform 0.3s ease;
 }
 
 .login-box:hover {
@@ -70,7 +47,7 @@ html, body {
     font-size: 1.8em;
 }
 
-/* ======== Champs ======== */
+/* ===== Champs ===== */
 .login-input {
     display: flex;
     flex-direction: column;
@@ -83,9 +60,9 @@ html, body {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid var(--input-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     font-size: 1em;
-    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .login-input input:focus {
@@ -94,17 +71,17 @@ html, body {
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
 }
 
-/* ======== Bouton ======== */
+/* ===== Bouton ===== */
 .button button {
     width: 100%;
     padding: 12px;
     border: none;
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     background-color: var(--primary-color);
     color: #fff;
     font-size: 1.1em;
     cursor: pointer;
-    transition: background-color var(--transition-speed), transform var(--transition-speed);
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .button button:hover {
@@ -112,7 +89,7 @@ html, body {
     transform: scale(1.03);
 }
 
-.error{
+.error {
     color: red;
     font-size: 0.9rem;
 }

@@ -1,0 +1,51 @@
+/* ===== SHARED STYLES - Used across all pages ===== */
+
+/* ===== Shared Variables ===== */
+:root {
+    --bg-color: #0d1117;
+    --panel-bg: #161b22;
+    --accent: #00aaff;
+    --text-color: #e6edf3;
+    --border-color: #30363d;
+    --radius: 8px;
+    --font: "Consolas", "Courier New", monospace;
+    --transition-speed: 0.3s;
+}
+
+/* ===== Global Page Styles ===== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Top Bar (appears in all pages) ===== */
+.top-bar {
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+}
+
+.top-bar h1 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin: 0;
+}
+
+.top-bar nav a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+.top-bar nav a:hover {
+    color: #66ccff;
+}
