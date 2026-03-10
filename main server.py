@@ -50,7 +50,6 @@ def init_db():
             vitesse REAL,
             vitesse_moyenne REAL,
             FOREIGN KEY (temps) REFERENCES parcours(temps),
-            FOREIGN KEY (vitesse_moyenne) REFERENCES parcours(vitesse_moyenne),
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
