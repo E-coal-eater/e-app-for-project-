@@ -72,65 +72,6 @@ def connect_arduino():
 
 connect_arduino()
 # ---------------- Pilot Acquisition ----------------
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371000  # Earth radius in meters
-    phi1 = math.radians(lat1)
-    phi2 = math.radians(lat2)
-    dphi = math.radians(lat2 - lat1)
-    dlambda = math.radians(lon2 - lon1)
-
-    a = math.sin(dphi/2)**2 + \
-        math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
-
-    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
-@app.route("/gps_update", methods=['POST'])
-def gps_update():
-    global last_gps_point, current_parcours_id
-    print("gps_update called")
-    print(request.json)
-    data = request.json
-    print(data)
-    lat = data["latitude"]
-    lon = data["longitude"]
-    print("lat:", lat, "lon:", lon)
-
-    instant_speed = data["instant_speed_ms"]
-    average_speed = data["average_speed_ms"]
-
-    distance = 0
-
-    if last_gps_point:
-        distance = haversine(
-            last_gps_point["lat"],
-            last_gps_point["lon"],
-            lat,
-            lon
-        )
-
-    last_gps_point = {"lat": lat, "lon": lon}
-
-    if current_parcours_id:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO points (id_parcours, temps, battery, position, distance, vitesse, vitesse_moyenne)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            current_parcours_id,
-            int(time.time()),
-            None,
-            f"{lat},{lon}",
-            distance,
-            instant_speed,
-            average_speed
-        ))
-        conn.commit()
-        conn.close()
-
-    return jsonify({"status": "ok", "distance": distance})
-
-acquisition_running = False
 
 def acquisition_loop():
     global acquisition_running
