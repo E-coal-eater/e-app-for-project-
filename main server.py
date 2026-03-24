@@ -34,7 +34,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_velo INT,
             temps INT,
-            vitesse_moyenne REAL,
+            vitesse_moyenne_parcours REAL,
             FOREIGN KEY (id_velo) REFERENCES velos(id)
         )
         ''')
@@ -43,13 +43,12 @@ def init_db():
         CREATE TABLE points(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_parcours INT NOT NULL,
-            temps INT,
+            chrono INT,
             battery INT,
             position TEXT,
             distance REAL,
             vitesse REAL,
             vitesse_moyenne REAL,
-            FOREIGN KEY (temps) REFERENCES parcours(temps),
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
@@ -85,7 +84,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
     return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-@app.route("/gps_update", methods=['GET','POST'])
+@app.route("/gps_update", methods=['POST'])
 def gps_update():
     global last_gps_point, current_parcours_id
     print("gps_update called")
@@ -199,6 +198,7 @@ def control():
 
     if request.method == 'POST':
         modele = request.form.get('modele')
+        parcours = request.form.get('parcours')
         if modele:
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -207,6 +207,14 @@ def control():
                 conn.close()
                 return redirect(url_for('control', err='invalidModele'))
             cursor.execute("INSERT INTO velos (modele) VALUES (?)", (modele,))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('control'))
+        
+        elif parcours:
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO parcours DEFAULT VALUES")
             conn.commit()
             conn.close()
             return redirect(url_for('control'))

@@ -24,37 +24,6 @@
     color: var(--accent);
     margin-bottom: 10px;
 }
-
-/* ===== Zone log / terminal ===== */
-.log-window {
-    background-color: #0b0f14;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 0.9rem;
-}
-
-.log-window p {
-    margin: 3px 0;
-}
-
-/* ===== Zone principale ===== */
-.content-area {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.content-area img {
-    width: 300px;
-    height: auto;
-    border-radius: var(--radius);
-    opacity: 0.8;
-}
-
 /* ===== Panneau de droite (contrôles) ===== */
 .control-area {
     flex: 1;

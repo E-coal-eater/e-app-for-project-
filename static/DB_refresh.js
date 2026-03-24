@@ -5,16 +5,32 @@ function refreshDB() {
 
             // ----- VELOS -----
             let velosTable = document.getElementById("velosTable");
-            velosTable.innerHTML = `<tr><th>ID</th><th>Modèle</th></tr>`;
+            velosTable.innerHTML = `<tr>
+                <th>ID</th>
+                <th>Modèle</th>
+            </tr>`;
             data.velos.forEach(v => {
-                velosTable.innerHTML += `<tr><td>${v.id}</td><td>${v.modele}</td></tr>`;
+                velosTable.innerHTML += `<tr>
+                    <td>${v.id}</td>
+                    <td>${v.modele}</td>
+                </tr>`;
             });
 
             // ----- PARCOURS -----
             let parcoursTable = document.getElementById("parcoursTable");
-            parcoursTable.innerHTML = `<tr><th>ID</th><th>ID Vélo</th><th>Temps</th></tr>`;
+            parcoursTable.innerHTML = `<tr>
+                <th>ID</th>
+                <th>ID Vélo</th>
+                <th>Temps</th>
+                <th>Vitesse Moyenne du Parcour</th>
+            </tr>`;
             data.parcours.forEach(p => {
-                parcoursTable.innerHTML += `<tr><td>${p.id}</td><td>${p.id_velo ?? '-'}</td><td>${p.temps ?? '-'}</td></tr>`;
+                parcoursTable.innerHTML += `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.id_velo ?? '-'}</td>
+                    <td>${p.temps ?? '-'}</td>
+                    <td>${p.vitesse_moyenne_parcours ?? '-'}</td>
+                </tr>`;
             });
 
             // ----- POINTS -----
@@ -22,7 +38,7 @@ function refreshDB() {
             pointsTable.innerHTML = `<tr>
                 <th>ID</th>
                 <th>ID Parcours</th>
-                <th>Temps</th>
+                <th>Chronomètre</th>
                 <th>Batterie</th>
                 <th>Position</th>
                 <th>Distance</th>
@@ -33,7 +49,7 @@ function refreshDB() {
                 pointsTable.innerHTML += `<tr>
                     <td>${pt.id}</td>
                     <td>${pt.id_parcours}</td>
-                    <td>${pt.temps}</td>
+                    <td>${pt.chrono ?? '-'}</td>
                     <td>${pt.battery ?? '-'}</td>
                     <td>${pt.position ?? '-'}</td>
                     <td>${pt.distance ?? '-'}</td>

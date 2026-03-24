@@ -14,22 +14,6 @@
             <a href="/">Retour à la page principale</a>
         </nav>
     </header>
-
-    <main class="console">
-        <section class="left-panel">
-            <h2>Logs / Terminal</h2>
-            <div class="log-window">
-                <p>[SYSTEM] Console initialisée...</p>
-                <p>[INFO] En attente de commande...</p>
-            </div>
-        </section>
-
-        <section class="main-panel">
-            <h2>Zone principale</h2>
-            <div class="content-area">
-            </div>
-        </section>
-
         <section class="right-panel">
             <h2>Database</h2>
             <div class="control-area">
@@ -44,6 +28,9 @@
                     <form method="POST" class="add-form">
                         <input type="text" name="modele" placeholder="New vélo model" required>
                         <button type="submit">Add</button>
+                    </form>
+                    <form method="POST" class="add-form">
+                        <button type="submit" name="parcours" value="1">Ajouter un nouveau parcours</button>
                     </form>
                 </div>
 
