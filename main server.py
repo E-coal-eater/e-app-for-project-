@@ -15,6 +15,18 @@ acquisition_running = False
 last_gps_point = None
 current_parcours_id = None
 
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371000  # Earth radius in meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi/2)**2 + \
+        math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+
+    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
 # ---------------- Database Initialization ----------------
 def init_db():
     if not os.path.exists(DB_NAME):
@@ -72,6 +84,126 @@ def connect_arduino():
 
 connect_arduino()
 # ---------------- Pilot Acquisition ----------------
+parcours_start_time = None
+@app.route('/start_parcours', methods=['POST'])
+def start_parcours():
+    global current_parcours_id, parcours_start_time
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    # Get last added velo
+    cursor.execute("SELECT id FROM velos ORDER BY id DESC LIMIT 1")
+    last_velo = cursor.fetchone()
+    id_velo = last_velo[0] if last_velo else None
+
+    # Always create a fresh parcours row
+    cursor.execute("INSERT INTO parcours (id_velo) VALUES (?)", (id_velo,))
+    conn.commit()
+    current_parcours_id = cursor.lastrowid
+    parcours_start_time = time.time()
+    conn.close()
+
+    return {"ok": True, "parcours_id": current_parcours_id}
+
+
+@app.route('/stop_parcours', methods=['POST'])
+def stop_parcours():
+    global current_parcours_id, parcours_start_time
+
+    if not current_parcours_id:
+        return {"ok": False, "error": "No parcours running"}
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    temps = int(time.time() - parcours_start_time) if parcours_start_time else 0
+
+    cursor.execute(
+        "SELECT AVG(vitesse_moyenne) FROM points WHERE id_parcours = ?",
+        (current_parcours_id,)
+    )
+    row = cursor.fetchone()
+    avg_speed = row[0] if row and row[0] is not None else 0
+
+    cursor.execute(
+        "UPDATE parcours SET temps = ?, vitesse_moyenne_parcours = ? WHERE id = ?",
+        (temps, avg_speed, current_parcours_id)
+    )
+    conn.commit()
+    conn.close()
+
+    current_parcours_id = None
+    parcours_start_time = None
+
+    return {"ok": True}
+
+# New route: return points for a specific parcours
+@app.route('/parcours/<int:parcours_id>/points')
+def parcours_points(parcours_id):
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM points WHERE id_parcours = ?", (parcours_id,))
+    points = cursor.fetchall()
+    conn.close()
+
+    if not points:
+        return {"points": [], "count": 0}
+
+    return {
+        "points": [dict(p) for p in points],
+        "count": len(points)
+    }
+
+@app.route("/gps_update", methods=['POST'])
+def gps_update():
+    global last_gps_point, current_parcours_id, parcours_start_time
+
+    # If no parcours is running, store nothing
+    if not current_parcours_id:
+        return jsonify({"status": "no_parcours"})
+
+    data = request.json
+    lat = data["latitude"]
+    lon = data["longitude"]
+    instant_speed = data["instant_speed_ms"]
+    average_speed = data["average_speed_ms"]
+
+    # Chrono = seconds elapsed since parcours started
+    chrono = int(time.time() - parcours_start_time) if parcours_start_time else 0
+
+    # Distance from last point using haversine
+    distance = 0.0
+    if last_gps_point:
+        distance = haversine(
+            last_gps_point["lat"],
+            last_gps_point["lon"],
+            lat,
+            lon
+        )
+
+    last_gps_point = {"lat": lat, "lon": lon}
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO points (id_parcours, chrono, battery, position, distance, vitesse, vitesse_moyenne)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        current_parcours_id,
+        chrono,                     # elapsed seconds since start
+        None,                       # battery — not yet wired
+        f"{lat},{lon}",             # position as "lat,lon"
+        round(distance, 4),
+        round(instant_speed, 4),
+        round(average_speed, 4)
+    ))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "ok", "chrono": chrono, "distance": distance})
 
 def acquisition_loop():
     global acquisition_running

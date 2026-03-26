@@ -3,7 +3,7 @@ let lastTimestamp = null;
 let totalDistance = 0;
 let startTime = null;
 let lastInstantSpeed = 0;
-let tracking = false;
+let geoTracking = false;
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000;
@@ -17,27 +17,25 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function startTracking() {
-    if (tracking) return;
-    tracking = true;
-
-    document.getElementById('tracking-status').innerText = 'true';
+function startGeoTracking() {
+    if (geoTracking) return;
+    geoTracking = true;
 
     if (!navigator.geolocation) {
-        document.getElementById('error').innerText = 'Geolocation not supported';
-        tracking = false;
-        document.getElementById('tracking-status').innerText = 'false';
+        document.getElementById('geo-error').innerText = 'Geolocation not supported';
+        geoTracking = false;
         return;
     }
 
     startTime = Date.now();
 
-    navigator.geolocation.watchPosition(showPosition, showError, {
+    navigator.geolocation.watchPosition(onGpsPosition, onGpsError, {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 5000
     });
 
+    // Every second: update speeds + send to Flask
     setInterval(() => {
         if (!startTime || !lastPosition) return;
 
@@ -47,21 +45,14 @@ function startTracking() {
         document.getElementById('instant-speed').innerText = (lastInstantSpeed * 3.6).toFixed(2) + ' km/h';
         document.getElementById('average-speed').innerText = (averageSpeed * 3.6).toFixed(2) + ' km/h';
 
-        sendPosition(lastPosition.lat, lastPosition.lon, lastInstantSpeed, averageSpeed);
+        sendGpsToFlask(lastPosition.lat, lastPosition.lon, lastInstantSpeed, averageSpeed);
     }, 1000);
 }
 
-function showPosition(position) {
+function onGpsPosition(position) {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
     const now = Date.now();
-
-    document.getElementById('latitude').innerText = lat.toFixed(6);
-    document.getElementById('longitude').innerText = lon.toFixed(6);
-    document.getElementById('heading').innerText = position.coords.heading
-        ? position.coords.heading.toFixed(2) + '°'
-        : 'N/A';
-    document.getElementById('error').innerText = '';
 
     if (lastPosition && lastTimestamp) {
         const distance = haversineDistance(lastPosition.lat, lastPosition.lon, lat, lon);
@@ -74,23 +65,23 @@ function showPosition(position) {
 
     lastPosition = { lat, lon };
     lastTimestamp = now;
+
+    document.getElementById('geo-error').innerText = '';
 }
 
-function showError(error) {
-    document.getElementById('error').innerText = 'Error: ' + error.message;
+function onGpsError(error) {
+    document.getElementById('geo-error').innerText = 'GPS Error: ' + error.message;
 }
 
-function sendPosition(lat, lon, instantSpeed = 0, averageSpeed = 0) {
+function sendGpsToFlask(lat, lon, instantSpeed = 0, averageSpeed = 0) {
     fetch("/gps_update", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            latitude:12, //lat,
-            longitude:67, //lon,
-            instant_speed_ms:2.6, //parseFloat(instantSpeed.toFixed(4)),
-            average_speed_ms:55, //parseFloat(averageSpeed.toFixed(4))
+            latitude: lat,
+            longitude: lon,
+            instant_speed_ms: parseFloat(instantSpeed.toFixed(4)),
+            average_speed_ms: parseFloat(averageSpeed.toFixed(4))
         })
     });
 }

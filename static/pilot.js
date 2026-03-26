@@ -1,40 +1,37 @@
-// Called when the user clicks the Start / Stop Acquisition button
-function toggleAcquisition() {
-    
-    // Send a POST request to Flask to ask for acquisition toggle
-    fetch("/toggle_acquisition", { method: "POST" })
+let parcoursRunning = false;
+
+function startParcours() {
+    // 1. Tell Flask to create a new parcours row and set current_parcours_id
+    fetch("/start_parcours", { method: "POST" })
         .then(res => res.json())
         .then(data => {
-            
-            // If Flask answers with an error (ex: no Bluetooth connected)
             if (!data.ok) {
-                // Display the error message in red text on the page
-                document.getElementById("errorMsg").innerText =
-                    "Can't start acquisition: " + data.error;
-            } 
-            else {
-                // If everything is OK, clear any previous error message
-                document.getElementById("errorMsg").innerText = "";
+                document.getElementById("errorMsg").innerText = "Erreur: " + data.error;
+                return;
             }
+            parcoursRunning = true;
+            document.getElementById("errorMsg").innerText = "";
+            document.getElementById("parcoursStatus").innerText = "RUNNING";
+            document.getElementById("parcoursButton").innerText = "Stop Parcours";
+            document.getElementById("parcoursButton").onclick = stopParcours;
+
+            // 2. Start GPS so points get sent to Flask every second
+            startGeoTracking(); // from geolocalisation.js
         });
 }
 
-
-// This function continuously checks acquisition status from Flask
-function refreshStatus() {
-    fetch("/acquisition_status")
+function stopParcours() {
+    // Tell Flask to finalize the parcours (temps + vitesse_moyenne)
+    fetch("/stop_parcours", { method: "POST" })
         .then(res => res.json())
         .then(data => {
-            let text;
-            if (!data.connected) text = "NO DEVICE";
-            else if (data.running) text = "RUNNING";
-            else text = "STOPPED";
-
-            document.getElementById("statusText").innerText = text;
+            if (!data.ok) {
+                document.getElementById("errorMsg").innerText = "Erreur: " + data.error;
+                return;
+            }
+            parcoursRunning = false;
+            document.getElementById("parcoursStatus").innerText = "STOPPED";
+            document.getElementById("parcoursButton").innerText = "Start Parcours";
+            document.getElementById("parcoursButton").onclick = startParcours;
         });
 }
-
-
-// Call refreshStatus() every 500 milliseconds (0.5 seconds)
-// This keeps the status text updated in real-time without reloading the page
-setInterval(refreshStatus, 500);

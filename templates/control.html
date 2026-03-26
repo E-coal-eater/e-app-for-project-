@@ -5,7 +5,6 @@
     <title>Console de contrôle</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='control.css') }}"/>
-    <script src="{{ url_for('static', filename='db_refresh.js') }}"></script>
 </head>
 <body>
     <header class="top-bar">
@@ -14,42 +13,49 @@
             <a href="/">Retour à la page principale</a>
         </nav>
     </header>
-        <section class="right-panel">
-            <h2>Database</h2>
-            <div class="control-area">
 
-                <div class="db-block">
-                    <h3>Add Velo</h3>
+    <section class="right-panel">
+        <h2>Database</h2>
+        <div class="control-area">
 
-                    {% if err == 'invalidModele' %}
-                        <p style="color:red;">Modele déjà existant</p>
-                    {% endif %}
-
-                    <form method="POST" class="add-form">
-                        <input type="text" name="modele" placeholder="New vélo model" required>
-                        <button type="submit">Add</button>
-                    </form>
-                    <form method="POST" class="add-form">
-                        <button type="submit" name="parcours" value="1">Ajouter un nouveau parcours</button>
-                    </form>
-                </div>
-
-                <div class="db-block">
-                    <h3>Velos</h3>
-                    <table id="velosTable"></table>
-                </div>
-
-                <div class="db-block">
-                    <h3>Parcours</h3>
-                    <table id="parcoursTable"></table>
-                </div>
-
-                <div class="db-block">
-                    <h3>Points</h3>
-                    <table id="pointsTable"></table>
-                </div>
-
+            <div class="db-block">
+                <h3>Add Vélo</h3>
+                {% if err == 'invalidModele' %}
+                    <p style="color:red;">Modèle déjà existant</p>
+                {% endif %}
+                <form method="POST" class="add-form">
+                    <input type="text" name="modele" placeholder="Nouveau modèle" required>
+                    <button type="submit">Ajouter</button>
+                </form>
+                <form method="POST" class="add-form">
+                    <button type="submit" name="parcours" value="1">Ajouter un nouveau parcours</button>
+                </form>
             </div>
-        </section>
-    </main>
+
+            <!-- VELOS -->
+            <div class="db-block">
+                <h3>Vélos</h3>
+                <table id="velosTable"></table>
+            </div>
+
+            <!-- PARCOURS — each row has a "Voir points" button -->
+            <div class="db-block">
+                <h3>Parcours</h3>
+                <table id="parcoursTable"></table>
+            </div>
+
+            <!-- POINTS DETAIL — shown when a parcours is selected -->
+            <div class="db-block" id="pointsBlock" style="display:none;">
+                <h3>Points du parcours <span id="selectedParcours"></span>
+                    <button onclick="closePoints()" style="float:right; font-size:0.8em;">✕ Fermer</button>
+                </h3>
+                <p id="pointsCount"></p>
+                <table id="pointsTable"></table>
+            </div>
+
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='db_refresh.js') }}"></script>
 </body>
+</html>

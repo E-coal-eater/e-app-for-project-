@@ -5,8 +5,6 @@
     <title>Console d'affichage</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='pilot-stats.css') }}"/>
-    <script src="{{ url_for('static', filename='pilot.js') }}"></script>
-    <script src="{{ url_for('static', filename='geolocalisation.js') }}"></script>
 </head>
 
 <body>
@@ -18,23 +16,31 @@
     </header>
 
     <main class="console">
-        <!-- GRAND PANEL CENTRAL VIDE -->
         <section class="main-panel">
             <h2>Zone d'affichage</h2>
             <div class="content-area" id="displayArea">
-                <button id="toggleButton" onclick="ToggleAcquisition()">Start Acquisition</button>
-                <p>Status: 
-                    <span id="statusText">
-                        {% if acquisition_running %}
-                            RUNNING
-                        {% else %}
-                            STOPPED
-                        {% endif %}
-                    </span>
-                </p>
+
+                <!-- Start / Stop Parcours -->
+                <button id="parcoursButton" onclick="startParcours()">Start Parcours</button>
+                <p>Parcours: <span id="parcoursStatus">STOPPED</span></p>
                 <p id="errorMsg" style="color:red;"></p>
+
+                <!-- Only speeds shown to pilot -->
+                <div class="info">
+                    <span class="label">Vitesse instantanée</span>
+                    <span class="value" id="instant-speed">-</span>
+                </div>
+                <div class="info">
+                    <span class="label">Vitesse moyenne</span>
+                    <span class="value" id="average-speed">-</span>
+                </div>
+                <div id="geo-error" style="color:red;"></div>
+
             </div>
         </section>
     </main>
+
+    <script src="{{ url_for('static', filename='geolocalisation.js') }}"></script>
+    <script src="{{ url_for('static', filename='pilot.js') }}"></script>
 </body>
 </html>
