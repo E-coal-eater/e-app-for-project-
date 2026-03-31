@@ -70,6 +70,53 @@ def init_db():
 
 init_db()
 
+@app.route('/reset_db', methods=['POST'])
+def reset_db():
+    global current_parcours_id, parcours_start_time, last_gps_point
+    current_parcours_id = None
+    parcours_start_time = None
+    last_gps_point = None
+    
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("DROP TABLE IF EXISTS points")
+    cursor.execute("DROP TABLE IF EXISTS parcours")
+    cursor.execute("DROP TABLE IF EXISTS velos")
+    
+    cursor.execute('''
+        CREATE TABLE velos(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            modele TEXT NOT NULL UNIQUE
+        )
+        ''')
+        
+    cursor.execute('''
+        CREATE TABLE parcours(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_velo INT,
+            temps INT,
+            vitesse_moyenne_parcours REAL,
+            FOREIGN KEY (id_velo) REFERENCES velos(id)
+        )
+        ''')
+        
+    cursor.execute('''
+        CREATE TABLE points(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_parcours INT NOT NULL,
+            chrono INT,
+            battery INT,
+            position TEXT,
+            distance REAL,
+            vitesse REAL,
+            vitesse_moyenne REAL,
+            FOREIGN KEY (id_parcours) REFERENCES parcours(id)
+        )
+        ''')
+    conn.commit()
+    conn.close()
+    return redirect(url_for('control'))
+        
 # ---------------- Arduino acquisition --------------
 def connect_arduino():
     global ser, arduino_connected

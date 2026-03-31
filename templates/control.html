@@ -30,6 +30,12 @@
                 <form method="POST" class="add-form">
                     <button type="submit" name="parcours" value="1">Ajouter un nouveau parcours</button>
                 </form>
+                <div class="db-block" style="border: 2px solid red;">
+                    <h3 style="color:red;">Danger Zone</h3>
+                    <form method="POST" action="/reset_db" onsubmit="return confirm('Supprimer toute la base de données ? Cette action est irréversible.')">
+                        <button type="submit" style="background:red; color:white;"> Réinitialiser la base de données</button>
+                    </form>
+                </div>
             </div>
 
             <!-- VELOS -->
