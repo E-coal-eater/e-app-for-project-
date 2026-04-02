@@ -14,6 +14,7 @@ bluetooth_connected = False
 acquisition_running = False
 last_gps_point = None
 current_parcours_id = None
+parcours_start_time = None
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371000  # Earth radius in meters
@@ -131,7 +132,6 @@ def connect_arduino():
 
 connect_arduino()
 # ---------------- Pilot Acquisition ----------------
-parcours_start_time = None
 @app.route('/start_parcours', methods=['POST'])
 def start_parcours():
     global current_parcours_id, parcours_start_time
@@ -152,7 +152,6 @@ def start_parcours():
     conn.close()
 
     return {"ok": True, "parcours_id": current_parcours_id}
-
 
 @app.route('/stop_parcours', methods=['POST'])
 def stop_parcours():
@@ -184,25 +183,6 @@ def stop_parcours():
     parcours_start_time = None
 
     return {"ok": True}
-
-# New route: return points for a specific parcours
-@app.route('/parcours/<int:parcours_id>/points')
-def parcours_points(parcours_id):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM points WHERE id_parcours = ?", (parcours_id,))
-    points = cursor.fetchall()
-    conn.close()
-
-    if not points:
-        return {"points": [], "count": 0}
-
-    return {
-        "points": [dict(p) for p in points],
-        "count": len(points)
-    }
 
 @app.route("/gps_update", methods=['POST'])
 def gps_update():
@@ -383,4 +363,4 @@ def db_data():
 
 # ---------------- Run Flask ----------------
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)

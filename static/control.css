@@ -90,3 +90,7 @@
     background-color: #161b22;
     color: var(--accent);
 }
+
+.map {
+    height: 200px;
+}

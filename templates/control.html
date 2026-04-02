@@ -5,6 +5,8 @@
     <title>Console de contrôle</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='control.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='leaflet.css') }}"/>
+    <script src="{{ url_for('static', filename='leaflet.js')}}"></script>
 </head>
 <body>
     <header class="top-bar">
@@ -26,9 +28,6 @@
                 <form method="POST" class="add-form">
                     <input type="text" name="modele" placeholder="Nouveau modèle" required>
                     <button type="submit">Ajouter</button>
-                </form>
-                <form method="POST" class="add-form">
-                    <button type="submit" name="parcours" value="1">Ajouter un nouveau parcours</button>
                 </form>
                 <div class="db-block" style="border: 2px solid red;">
                     <h3 style="color:red;">Danger Zone</h3>
@@ -59,6 +58,15 @@
                 <table id="pointsTable"></table>
             </div>
 
+            <div id="map">
+                <script>
+                    var map = L.map('map').setView([51.505, -0.09], 13);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map);
+                </script>
+            </div>
         </div>
     </section>
 
