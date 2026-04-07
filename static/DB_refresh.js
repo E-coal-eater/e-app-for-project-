@@ -1,4 +1,5 @@
 let selectedParcoursId = null;
+let pointsInterval = null;
 
 function refreshDB() {
     fetch("/db_data")
@@ -7,10 +8,7 @@ function refreshDB() {
 
             // ----- VELOS -----
             let velosTable = document.getElementById("velosTable");
-            velosTable.innerHTML = `<tr>
-                <th>ID</th>
-                <th>Modèle</th>
-            </tr>`;
+            velosTable.innerHTML = `<tr><th>ID</th><th>Modèle</th></tr>`;
             data.velos.forEach(v => {
                 velosTable.innerHTML += `<tr>
                     <td>${v.id}</td>
@@ -25,23 +23,18 @@ function refreshDB() {
                 <th>ID Vélo</th>
                 <th>Temps (s)</th>
                 <th>Vitesse Moyenne</th>
-                <th>Points</th>
+                <th></th>
             </tr>`;
             data.parcours.forEach(p => {
-                const isSelected = selectedParcoursId === p.id ? 'style="background:#ddf"' : '';
-                parcoursTable.innerHTML += `<tr ${isSelected}>
+                const isActive = selectedParcoursId === p.id;
+                parcoursTable.innerHTML += `<tr class="${isActive ? 'row-selected' : ''}">
                     <td>${p.id}</td>
                     <td>${p.id_velo ?? '-'}</td>
                     <td>${p.temps ?? '-'}</td>
                     <td>${p.vitesse_moyenne_parcours != null ? p.vitesse_moyenne_parcours.toFixed(2) + ' m/s' : '-'}</td>
-                    <td><button onclick="showPoints(${p.id})">Voir</button></td>
+                    <td><button onclick="showPoints(${p.id})">${isActive ? '● Actif' : 'Voir'}</button></td>
                 </tr>`;
             });
-
-            // ----- REFRESH POINTS if one is selected -----
-            if (selectedParcoursId !== null) {
-                loadPoints(selectedParcoursId);
-            }
         })
         .catch(err => console.error("DB refresh error:", err));
 }
@@ -50,12 +43,24 @@ function showPoints(parcoursId) {
     selectedParcoursId = parcoursId;
     document.getElementById("pointsBlock").style.display = "block";
     document.getElementById("selectedParcours").innerText = "#" + parcoursId;
+
+    // Load immediately
     loadPoints(parcoursId);
+
+    // Clear any old interval and start a fresh one
+    if (pointsInterval) clearInterval(pointsInterval);
+    pointsInterval = setInterval(() => {
+        if (selectedParcoursId !== null) loadPoints(selectedParcoursId);
+    }, 1000);
 }
 
 function closePoints() {
     selectedParcoursId = null;
     document.getElementById("pointsBlock").style.display = "none";
+    if (pointsInterval) {
+        clearInterval(pointsInterval);
+        pointsInterval = null;
+    }
 }
 
 function loadPoints(parcoursId) {
@@ -72,30 +77,31 @@ function loadPoints(parcoursId) {
                 <th>Batterie</th>
                 <th>Position</th>
                 <th>Distance (m)</th>
-                <th>Vitesse inst. (m/s)</th>
-                <th>Vitesse moy. (m/s)</th>
+                <th>Vit. inst. (m/s)</th>
+                <th>Vit. moy. (m/s)</th>
             </tr>`;
 
             if (data.count === 0) {
-                table.innerHTML += `<tr><td colspan="7" style="text-align:center;">Aucun point</td></tr>`;
+                table.innerHTML += `<tr><td colspan="7" style="text-align:center; color:#888;">Aucun point enregistré</td></tr>`;
                 return;
             }
 
-            data.points.forEach(pt => {
+            // Show newest points first
+            [...data.points].reverse().forEach(pt => {
                 table.innerHTML += `<tr>
                     <td>${pt.id}</td>
-                    <td>${pt.chrono ?? '-'}</td>
+                    <td>${pt.chrono != null ? pt.chrono + 's' : '-'}</td>
                     <td>${pt.battery ?? '-'}</td>
                     <td>${pt.position ?? '-'}</td>
                     <td>${pt.distance != null ? pt.distance.toFixed(2) : '-'}</td>
-                    <td>${pt.vitesse != null ? pt.vitesse.toFixed(2) : '-'}</td>
-                    <td>${pt.vitesse_moyenne != null ? pt.vitesse_moyenne.toFixed(2) : '-'}</td>
+                    <td>${pt.vitesse != null ? pt.vitesse.toFixed(3) : '-'}</td>
+                    <td>${pt.vitesse_moyenne != null ? pt.vitesse_moyenne.toFixed(3) : '-'}</td>
                 </tr>`;
             });
         })
         .catch(err => console.error("Points load error:", err));
 }
 
-// First load then every second
+// DB refreshes every 2s (no need for 1s since points have their own interval)
 refreshDB();
-setInterval(refreshDB, 1000);
+setInterval(refreshDB, 2000);

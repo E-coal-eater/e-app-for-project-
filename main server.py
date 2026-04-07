@@ -247,6 +247,23 @@ def acquisition_loop():
                 pass
         time.sleep(1)
 
+@app.route('/parcours/<int:parcours_id>/points')
+def parcours_points(parcours_id):
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM points WHERE id_parcours = ?", (parcours_id,))
+    points = cursor.fetchall()
+    conn.close()
+
+    if not points:
+        return {"points": [], "count": 0}
+
+    return {
+        "points": [dict(p) for p in points],
+        "count": len(points)
+    }
 threading.Thread(target=acquisition_loop, daemon=True).start()
 
 # ---------------- Authentication ----------------

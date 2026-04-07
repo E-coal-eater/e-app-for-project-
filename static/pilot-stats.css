@@ -1,58 +1,283 @@
-/* ===== Console Page - Single Panel (Alt Layout) ===== */
-/* Link shared.css first, then this file */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
-/* ===== Mise en page alternative ===== */
-.console {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px;
-    width: 100%;
+:root {
+    --bg:        #080c10;
+    --panel:     #0d1117;
+    --border:    #1e2d3d;
+    --accent:    #00e5ff;
+    --accent2:   #ff6b00;
+    --danger:    #ff2244;
+    --text:      #c8d8e8;
+    --dim:       #4a6070;
+    --green:     #00ff88;
+    --font-hud:  'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
 }
 
-/* ===== Style des panneaux ===== */
-.console section {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 10px;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-hud);
+    height: 100dvh;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
-.console h2 {
+/* Scanline overlay */
+.scanline {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+    );
+}
+
+/* ── HEADER ── */
+.hud-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+}
+
+.hud-title {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+}
+
+.back-btn {
     color: var(--accent);
-    margin: 0 0 10px 0;
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    font-family: var(--font-mono);
+    transition: color 0.2s;
+}
+.back-btn:hover { color: #fff; }
+
+.parcours-status-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--dim);
+    transition: color 0.3s;
+}
+.parcours-status-badge.running {
+    color: var(--green);
+    text-shadow: 0 0 8px var(--green);
+    animation: blink 1.2s step-end infinite;
+}
+@keyframes blink {
+    50% { opacity: 0.4; }
 }
 
-/* ===== Grande zone d'affichage vide ===== */
-.content-area {
+/* ── DASHBOARD ── */
+.dashboard {
     flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    color: #999;
-    font-size: 1.2rem;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 20px 20px;
+}
+
+/* ── SPEEDOMETER ── */
+.speedo-block {
+    display: flex;
+    justify-content: center;
+}
+
+.speedo-ring {
+    position: relative;
+    width: 220px;
+    height: 220px;
+}
+
+.speedo-svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
 }
 
-/* ===== MODE MOBILE PAYSAGE ===== */
-@media (max-width: 900px) and (orientation: landscape) {
-    .console {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
-
-    .right-panel {
-        grid-column: 1 / 3;
-    }
+.ring-bg {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 8;
 }
 
-@media (max-width: 768px) {
-    .console {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-    }
+.ring-track {
+    fill: none;
+    stroke: #111;
+    stroke-width: 8;
+}
+
+.ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 628;
+    stroke-dashoffset: 628;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 6px var(--accent));
+}
+
+.speedo-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.speed-value {
+    font-family: var(--font-mono);
+    font-size: 3.2rem;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -2px;
+    text-shadow: 0 0 20px var(--accent);
+}
+
+.speed-unit {
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-top: 2px;
+}
+
+.speed-label {
+    font-size: 0.6rem;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+}
+
+/* ── BOTTOM ROW ── */
+.bottom-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Stat cards left/right */
+.stat-card {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent2);
+}
+.stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: var(--dim);
+    margin-bottom: 6px;
+}
+.stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    color: #fff;
+    line-height: 1;
+}
+.stat-unit {
+    font-size: 0.65rem;
+    color: var(--accent2);
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+}
+
+/* Center control */
+.center-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.start-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    background: transparent;
+    color: var(--green);
+    cursor: pointer;
+    font-family: var(--font-hud);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+    box-shadow: 0 0 12px rgba(0,255,136,0.2), inset 0 0 12px rgba(0,255,136,0.05);
+}
+.start-btn:hover {
+    background: rgba(0,255,136,0.1);
+    box-shadow: 0 0 24px rgba(0,255,136,0.4), inset 0 0 20px rgba(0,255,136,0.1);
+}
+.start-btn.stopping {
+    border-color: var(--danger);
+    color: var(--danger);
+    box-shadow: 0 0 12px rgba(255,34,68,0.3), inset 0 0 12px rgba(255,34,68,0.05);
+}
+.start-btn.stopping:hover {
+    background: rgba(255,34,68,0.1);
+}
+.btn-icon { font-size: 1.4rem; line-height: 1; }
+.btn-text { font-size: 0.6rem; letter-spacing: 0.2em; }
+
+.chrono {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+}
+
+.geo-error {
+    color: var(--danger);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    min-height: 16px;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 400px) {
+    .speedo-ring { width: 180px; height: 180px; }
+    .speed-value { font-size: 2.6rem; }
+    .stat-value  { font-size: 1.3rem; }
+    .start-btn   { width: 68px; height: 68px; }
 }

@@ -2,42 +2,67 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Console d'affichage</title>
+    <title>Console Pilote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='pilot-stats.css') }}"/>
 </head>
-
 <body>
-    <header class="top-bar">
-        <h1>Console de Contrôle</h1>
-        <nav>
-            <a href="/">Retour à la page principale</a>
-        </nav>
+    <div class="scanline"></div>
+
+    <header class="hud-header">
+        <a href="/" class="back-btn">← RETOUR</a>
+        <div class="hud-title">CONSOLE PILOTE</div>
+        <div class="parcours-status-badge" id="statusBadge">■ ARRÊTÉ</div>
     </header>
 
-    <main class="console">
-        <section class="main-panel">
-            <h2>Zone d'affichage</h2>
-            <div class="content-area" id="displayArea">
+    <main class="dashboard">
 
-                <!-- Start / Stop Parcours -->
-                <button id="parcoursButton" onclick="startParcours()">Start Parcours</button>
-                <p>Parcours: <span id="parcoursStatus">STOPPED</span></p>
-                <p id="errorMsg" style="color:red;"></p>
-
-                <!-- Only speeds shown to pilot -->
-                <div class="info">
-                    <span class="label">Vitesse instantanée</span>
-                    <span class="value" id="instant-speed">-</span>
+        <!-- CENTER: Big speedometer -->
+        <div class="speedo-block">
+            <div class="speedo-ring">
+                <svg class="speedo-svg" viewBox="0 0 220 220">
+                    <circle cx="110" cy="110" r="100" class="ring-bg"/>
+                    <circle cx="110" cy="110" r="100" class="ring-track"/>
+                    <circle cx="110" cy="110" r="100" class="ring-fill" id="speedRing"/>
+                </svg>
+                <div class="speedo-inner">
+                    <div class="speed-value" id="instant-speed">0</div>
+                    <div class="speed-unit">km/h</div>
+                    <div class="speed-label">INSTANTANÉE</div>
                 </div>
-                <div class="info">
-                    <span class="label">Vitesse moyenne</span>
-                    <span class="value" id="average-speed">-</span>
-                </div>
-                <div id="geo-error" style="color:red;"></div>
-
             </div>
-        </section>
+        </div>
+
+        <!-- BOTTOM ROW: avg speed + chrono + button -->
+        <div class="bottom-row">
+
+            <div class="stat-card">
+                <div class="stat-label">VITESSE MOY.</div>
+                <div class="stat-value" id="average-speed">0.00</div>
+                <div class="stat-unit">km/h</div>
+            </div>
+
+            <div class="center-control">
+                <button class="start-btn" id="parcoursButton" onclick="startParcours()">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">START</span>
+                </button>
+                <div class="chrono" id="chronoDisplay">00:00</div>
+                <p id="errorMsg" style="color:#ff4444; font-size:0.75rem; margin:4px 0 0;"></p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">PARCOURS</div>
+                <div class="stat-value" id="parcoursStatus">—</div>
+                <div class="stat-unit">ID</div>
+            </div>
+
+        </div>
+
+        <div id="geo-error" class="geo-error"></div>
+
     </main>
 
     <script src="{{ url_for('static', filename='geolocalisation.js') }}"></script>
