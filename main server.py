@@ -66,6 +66,7 @@ def init_db():
         )
         ''')
         
+        cursor.execute("INSERT INTO velos (modele) Values ('test')")
         conn.commit()
         conn.close()
 
@@ -114,6 +115,9 @@ def reset_db():
             FOREIGN KEY (id_parcours) REFERENCES parcours(id)
         )
         ''')
+    
+    cursor.execute("INSERT INTO velos (modele) Values ('test')")
+
     conn.commit()
     conn.close()
     return redirect(url_for('control'))
